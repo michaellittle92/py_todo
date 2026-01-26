@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from sqlalchemy.ext.declarative import declarative_base
 
-SLQALCHEMY_DATABASE_URL = 'sqlite:///./todos.db'
+SLQALCHEMY_DATABASE_URL = 'sqlite:///./todosapp.db'
 
 engine = create_engine(SLQALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
 
