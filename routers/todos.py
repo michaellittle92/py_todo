@@ -34,7 +34,6 @@ async def read_all(user: user_dependancy, db: db_dependancy):
         raise HTTPException(status_code=401, detail="Authentication Failed")
     return db.query(Todos).filter(Todos.owner_id == user.get('id')).all()
 
-    
 
 @router.get("/todo/{todo_id}", status_code=status.HTTP_200_OK)
 async def read_todo(user: user_dependancy, db: db_dependancy, todo_id: int = Path(gt=0)):

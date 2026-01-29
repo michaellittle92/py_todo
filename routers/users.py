@@ -1,12 +1,12 @@
 from typing import Annotated
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException, Path, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from models import Users
 from db import SessionLocal
 from .auth import get_current_user
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 from config import settings
 
 
@@ -43,12 +43,6 @@ async def read_user(user: user_dependancy, db: db_dependancy):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Authentication failed")
     return db.query(Users).filter(Users.id == user.get("id")).first()
 
-
-@router.get("/users", status_code=status.HTTP_200_OK)
-async def read_all(user: user_dependancy, db:db_dependancy):
-    if user is None or user.get('user_role') != 'admin':
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed")
-    return db.query(Users).all()
 
 @router.put("/change_password/",status_code=status.HTTP_204_NO_CONTENT)
 async def change_password(user: user_dependancy, db:db_dependancy, change_password_request: ChangePasswordRequest):
