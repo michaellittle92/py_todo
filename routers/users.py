@@ -37,6 +37,9 @@ class ChangePasswordRequest(BaseModel):
     new_password:str = Field(min_length=6)
     confirm_new_password: str
 
+class ChangePhoneNumberRequest(BaseModel):
+    new_phone_number:str = Field(min_length=10, max_length=12)
+
 @router.get("/", status_code=status.HTTP_200_OK)
 async def read_user(user: user_dependancy, db: db_dependancy):
     if user is None:
@@ -49,6 +52,17 @@ async def read_all(user: user_dependancy, db:db_dependancy):
     if user is None or user.get('user_role') != 'admin':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed")
     return db.query(Users).all()
+
+@router.put("/change_phone_number", status_code= status.HTTP_204_NO_CONTENT)
+async def change_phone_number(user: user_dependancy, db:db_dependancy, change_phone_number_requeset: ChangePhoneNumberRequest):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication Failed")
+    #update phone number in db
+    user_model = db.query(Users).filter(Users.id == user.get('id')).first()
+    user_model.phone_number = change_phone_number_requeset.new_phone_number
+
+    db.add(user_model)
+    db.commit()
 
 @router.put("/change_password/",status_code=status.HTTP_204_NO_CONTENT)
 async def change_password(user: user_dependancy, db:db_dependancy, change_password_request: ChangePasswordRequest):
