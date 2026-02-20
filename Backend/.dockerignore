@@ -1,0 +1,50 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs & local files
+*.log
+*.sqlite
+*.db
+
+# Testing / coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# Frontend build artifacts
+frontend/dist/
