@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import models
 from db import engine
 from routers import auth, todos, admin, users
@@ -9,10 +10,15 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:8080",
-        "http://localhost:5500",
-        "http://localhost:5173",
-    ],        # will need to add S3 URL / CloudFront domain here later when i know it
+    "http://localhost:5501",
+    "http://127.0.0.1:5501",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+],        # will need to add S3 URL / CloudFront domain here later when i know it
 
     allow_credentials=True,
     allow_methods=["*"],

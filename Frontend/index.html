@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Todo List</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+    <main>
+        <h1>Login</h1>
+
+        <section id="logged-out">
+            <form id="login-form">
+                <label>
+                    Username
+                    <input id="username" autocomplete="username" required />
+                </label>
+
+                <label>
+                    Password
+                    <input id="password" type="password" autocomplete="current-password" required />
+                </label>
+
+                <button type="submit">Sign in</button>
+            </form>
+
+            <p class="error" id="error"></p>
+        </section>
+
+        <section id="logged-in" class="hidden">
+            <p class="ok"> Logged in (token stored)</p>
+
+            <div class="row">
+                <button id="show-token">Show token payload</button>
+                <button id="logout" type="button">Logout</button>
+            </div>
+
+            <pre id="output"></pre>
+
+        </section>
+
+        <script src="./app.js"></script>
+    </main>
+</body>
+
+</html>
