@@ -15,21 +15,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Sync frontend to S3 /todo
-        uses: jakejarvis/s3-sync-action@v0.5.1
+      - name: Configure AWS credentials (basic keys)
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          # IMPORTANT: deploy into /todo, not bucket root
-          args: >-
-            --follow-symlinks
-            --delete
-            --exclude ".git*/*"
-            --exclude ".gitignore"
-            --exclude "README.md"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-4
+
+      - name: Sync frontend to S3 /todo
+        run: |
+          aws s3 sync frontend s3://${{ secrets.AWS_S3_BUCKET }}/todo \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "README.md" \
             --cache-control "max-age=60"
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ap-southeast-4
-          SOURCE_DIR: "frontend"
-          DEST_DIR: "todo"
+
+      - name: Invalidate CloudFront cache for /todo/*
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/todo/*"
