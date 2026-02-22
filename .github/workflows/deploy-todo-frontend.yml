@@ -24,7 +24,7 @@ jobs:
 
       - name: Sync frontend to S3 /todo
         run: |
-          aws s3 sync frontend s3://${{ secrets.AWS_S3_BUCKET }}/todo \
+          aws s3 sync Frontend s3://${{ secrets.AWS_S3_BUCKET }}/todo \
             --delete \
             --exclude ".git/*" \
             --exclude ".github/*" \
