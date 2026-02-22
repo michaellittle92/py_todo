@@ -19,13 +19,28 @@ function logout() {
 
 logoutBtn.addEventListener("click", logout);
 
+async function deleteTodo(id) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/todo/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.detail || `HTTP ${res.status}`);
+  }
+}
+
 function renderTodos(todos) {
   todoBody.innerHTML = "";
 
   if (!todos || todos.length === 0) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
-    cell.colSpan = 5;
+    cell.colSpan = 6;
     cell.textContent = "No todos found";
     row.appendChild(cell);
     todoBody.appendChild(row);
@@ -36,34 +51,30 @@ function renderTodos(todos) {
     const row = document.createElement("tr");
 
     row.innerHTML = `
-      <td>${t.id}</td>
-      <td>${t.title}</td>
-      <td>${t.description || ""}</td>
-      <td>${t.priority}</td>
-      <td>${t.complete ? "Yes" : "No"}</td>
-    `;
+  <td>${t.id}</td>
+  <td>${t.title}</td>
+  <td>${t.description || ""}</td>
+  <td>${t.priority}</td>
+  <td>${t.complete ? "Yes" : "No"}</td>
+  <td><button type="button" data-id="${t.id}">Delete</button></td>
+`;
     //delete logic 
-    const btn = row.querySelector("button[data-id]");
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.id;
-      const ok = confirm(`Delete todo #${id}?`);
-      if (!ok) return;
+  const btn = row.querySelector('button[data-id]');
+  btn.addEventListener("click", async () => {
+  const id = btn.dataset.id;
 
-      try {
-        btn.disabled = true;
-        btn.textContent = "Deleting...";
-        await apiFetch(`/todo/${id}`, { method: "DELETE" });
-
-        // Remove row immediately
-        row.remove();
-        // If table is empty now, show "No todos"
-        if (!todoBody.querySelector("tr")) renderTodos([]);
-      } catch (err) {
-        btn.disabled = false;
-        btn.textContent = "Delete";
-        errorEl.textContent = err.message;
-      }
-    });
+  try {
+    btn.disabled = true;
+    btn.textContent = "Deleting...";
+    await deleteTodo(id);
+    row.remove();
+    if (!todoBody.querySelector("tr")) renderTodos([]);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = "Delete";
+    errorEl.textContent = err.message;
+  }
+});
     //----
     todoBody.appendChild(row);
   }
