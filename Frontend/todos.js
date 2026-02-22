@@ -42,7 +42,29 @@ function renderTodos(todos) {
       <td>${t.priority}</td>
       <td>${t.complete ? "Yes" : "No"}</td>
     `;
+    //delete logic 
+    const btn = row.querySelector("button[data-id]");
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      const ok = confirm(`Delete todo #${id}?`);
+      if (!ok) return;
 
+      try {
+        btn.disabled = true;
+        btn.textContent = "Deleting...";
+        await apiFetch(`/todo/${id}`, { method: "DELETE" });
+
+        // Remove row immediately
+        row.remove();
+        // If table is empty now, show "No todos"
+        if (!todoBody.querySelector("tr")) renderTodos([]);
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Delete";
+        errorEl.textContent = err.message;
+      }
+    });
+    //----
     todoBody.appendChild(row);
   }
 }

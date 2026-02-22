@@ -47,7 +47,6 @@ loginForm.addEventListener("submit", async (e) => {
 
     setToken(data.access_token);
 
-    // ✅ Redirect after login
     window.location.href = "./todos.html";
   } catch (err) {
     errorEl.textContent = err.message;
