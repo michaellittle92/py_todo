@@ -1,0 +1,35 @@
+name: Deploy Todo Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/deploy-todo-frontend.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: michaellittle.io
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync frontend to S3 /todo
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          # IMPORTANT: deploy into /todo, not bucket root
+          args: >-
+            --follow-symlinks
+            --delete
+            --exclude ".git*/*"
+            --exclude ".gitignore"
+            --exclude "README.md"
+            --cache-control "max-age=60"
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-southeast-4
+          SOURCE_DIR: "frontend"
+          DEST_DIR: "todo"

@@ -1,5 +1,5 @@
 
-export const API_BASE_URL = "http://alb-todo-api-8992559.ap-southeast-4.elb.amazonaws.com";
+export const API_BASE = "https://api.michaellittle.io";
 
 export async function apiFetch(path, { method = "GET", headers = {}, body } = {}) {
   const res = await fetch(`${API_BASE_URL}${path}`, {
