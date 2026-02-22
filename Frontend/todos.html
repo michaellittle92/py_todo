@@ -5,10 +5,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Todos</title>
+    <link rel="stylesheet" href="todo.css">
 </head>
 
 <body>
-    <h1>Todos</h1>
+    <h1>Todo List</h1>
+    <h2>Create Todo</h2>
+    <form id="createTodoForm">
+        <label>
+            Title
+            <input id="newTitle" required />
+        </label>
+
+        <label>
+            Description
+            <input id="newDescription" />
+        </label>
+
+        <label>
+            Priority
+            <input id="newPriority" type="number" min="1" max="5" value="1" required />
+        </label>
+
+        <label>
+            Complete
+            <input id="newComplete" type="checkbox" />
+        </label>
+
+        <button type="submit">Create</button>
+    </form>
+
     <button id="logoutBtn" type="button">Logout</button>
 
     <p id="error"></p>

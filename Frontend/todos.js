@@ -8,6 +8,13 @@ const outputEl = document.getElementById("output");
 const logoutBtn = document.getElementById("logoutBtn");
 const todoBody = document.getElementById("todoBody");
 
+//Create Form
+const createTodoForm = document.getElementById("createTodoForm");
+const newTitle = document.getElementById("newTitle");
+const newDescription = document.getElementById("newDescription");
+const newPriority = document.getElementById("newPriority");
+const newComplete = document.getElementById("newComplete");
+
 function getToken() {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -110,5 +117,59 @@ loadTodos().catch((err) => {
 
   if (err.message.toLowerCase().includes("auth")) {
     logout();
+  }
+});
+
+async function createTodo(todo) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/todo`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(todo),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.detail || `HTTP ${res.status}`);
+  }
+}
+
+createTodoForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorEl.textContent = "";
+
+  const payload = {
+    title: newTitle.value.trim(),
+    description: newDescription.value.trim(),
+    priority: Number(newPriority.value),
+    complete: newComplete.checked,
+  };
+
+  if (!payload.title) {
+    errorEl.textContent = "Title is required";
+    return;
+  }
+
+  try {
+    const submitBtn = createTodoForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating...";
+
+    await createTodo(payload);
+
+    // reset form
+    createTodoForm.reset();
+    newPriority.value = "1";
+
+    // refresh list
+    await loadTodos();
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Create";
+  } catch (err) {
+    errorEl.textContent = err.message;
   }
 });
